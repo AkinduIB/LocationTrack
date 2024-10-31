@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geolocation Tracking</title>
+    <title>Live Geolocation Tracking</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,16 +15,34 @@
     </style>
 </head>
 <body>
-    <h1>Geolocation Tracking</h1>
-    <button id="getLocation">Get Location</button>
+    <h1>Live Geolocation Tracking</h1>
+    <button id="startTracking">Start Tracking</button>
+    <button id="stopTracking" disabled>Stop Tracking</button>
     <div id="location"></div>
 
     <script>
-        document.getElementById('getLocation').addEventListener('click', function() {
+        let watchId; // Variable to hold the watch ID
+
+        document.getElementById('startTracking').addEventListener('click', function() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
+                watchId = navigator.geolocation.watchPosition(showPosition, showError, {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                });
+                document.getElementById('startTracking').disabled = true;
+                document.getElementById('stopTracking').disabled = false;
             } else {
                 document.getElementById('location').innerText = "Geolocation is not supported by this browser.";
+            }
+        });
+
+        document.getElementById('stopTracking').addEventListener('click', function() {
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null; // Reset watchId
+                document.getElementById('startTracking').disabled = false;
+                document.getElementById('stopTracking').disabled = true;
             }
         });
 
