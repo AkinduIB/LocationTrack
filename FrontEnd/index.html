@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Location Monitoring</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDABrgnzxuIVX3HyWQyfMvEfQnu7E4RxT8&callback=initMap" async defer></script>
+</head>
+<body>
+    <h1>Live Location Monitoring</h1>
+    <input type="text" id="userId" placeholder="Enter User ID">
+    <button id="trackUser">Track User</button>
+    <div id="map"></div>
+
+    <script>
+        let map;
+        let marker;
+
+        function initMap() {
+            // Default map setup
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 0, lng: 0 },
+                zoom: 15
+            });
+        }
+
+        document.getElementById('trackUser').addEventListener('click', function() {
+            const userId = document.getElementById('userId').value;
+            if (userId) {
+                setInterval(() => fetchLocation(userId), 5000);
+            }
+        });
+
+        function fetchLocation(userId) {
+            fetch(`http://localhost:3000/getLocation/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.latitude && data.longitude) {
+                        updateMap(data.latitude, data.longitude);
+                    } else {
+                        console.log("No location data available.");
+                    }
+                })
+                .catch(error => console.error('Error fetching location:', error));
+        }
+
+        function updateMap(latitude, longitude) {
+            const newPosition = { lat: latitude, lng: longitude };
+            if (!marker) {
+                marker = new google.maps.Marker({
+                    position: newPosition,
+                    map: map
+                });
+            } else {
+                marker.setPosition(newPosition);
+            }
+            map.setCenter(newPosition);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Sharing</title>
+</head>
+<body>
+    <h1>Location Sharing</h1>
+    <p>Allow GPS tracking to share your location.</p>
+    <button id="startTracking">Allow Location Sharing</button>
+    <p id="status"></p>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('userId'); // Get userId from URL parameter
+
+        document.getElementById('startTracking').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(position => {
+                    const { latitude, longitude } = position.coords;
+                    updateLocationOnServer(userId, latitude, longitude);
+                    document.getElementById('status').innerText = `Location shared: Latitude ${latitude}, Longitude ${longitude}`;
+                }, showError, {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                });
+                document.getElementById('startTracking').disabled = true;
+            } else {
+                document.getElementById('status').innerText = "Geolocation is not supported by this browser.";
+            }
+        });
+
+        function updateLocationOnServer(userId, latitude, longitude) {
+            fetch('http://localhost:3000/updateLocation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, latitude, longitude })
+            })
+            .then(response => response.json())
+            .then(data => console.log(data.message))
+            .catch(error => console.error('Error updating location:', error));
+        }
+
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    document.getElementById('status').innerText = "Permission denied. Unable to track location.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    document.getElementById('status').innerText = "Location information is unavailable.";
+                    break;
+                case error.TIMEOUT:
+                    document.getElementById('status').innerText = "Location request timed out.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    document.getElementById('status').innerText = "An unknown error occurred.";
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
