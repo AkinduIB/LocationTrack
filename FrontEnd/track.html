@@ -33,7 +33,7 @@
         });
 
         function updateLocationOnServer(userId, latitude, longitude) {
-            fetch('http://localhost:3000/updateLocation', {
+            fetch('https://location-track-lkgocmjlh-akindus-projects-782d30b8.vercel.app/updateLocation', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId, latitude, longitude })

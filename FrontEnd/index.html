@@ -38,7 +38,7 @@
         });
 
         function fetchLocation(userId) {
-            fetch(`http://localhost:3000/getLocation/${userId}`)
+            fetch(`https://location-track-lkgocmjlh-akindus-projects-782d30b8.vercel.app/getLocation/${userId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.latitude && data.longitude) {
