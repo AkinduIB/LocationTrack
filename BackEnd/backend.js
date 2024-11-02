@@ -1,4 +1,4 @@
-// Install dependencies with: npm install express body-parser cors
+// backend.js
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');

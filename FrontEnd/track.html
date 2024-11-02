@@ -13,7 +13,7 @@
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const userId = urlParams.get('userId'); // Get userId from URL parameter
+        const userId = urlParams.get('userId');
 
         document.getElementById('startTracking').addEventListener('click', function() {
             if (navigator.geolocation) {
